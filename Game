@@ -1,1 +1,158 @@
+package com.example.sequenceflow;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import java.util.Random;
+
+public class Game extends AppCompatActivity {
+    TextView level,number,difficulty;
+    EditText answer;
+    Button confirm,exit;
+    Button retry;
+    public static int currentLevel = 1;
+    Random rand;
+    String randNumber;
+    String diff;
+    int delay = 3000;
+    int bonus = 1;
+    int nums = 1;
+    int previousLevel;
+    public static String highScore;
+
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_game);
+
+        diff = Difficulty.x;
+        exit = findViewById(R.id.exit);
+        level = findViewById(R.id.level);
+        number = findViewById(R.id.number);
+        difficulty = findViewById(R.id.difficultyShow);
+        answer = findViewById(R.id.answer);
+        confirm = findViewById(R.id.confirm);
+        retry = findViewById(R.id.Retry);
+        rand = new Random();
+
+
+        difficulty.setText(diff);
+        if(diff.equals("Medium")){
+            delay = 2000;
+            bonus = 2;
+        }
+        if(diff.equals("Hard")){
+            delay = 1000;
+            bonus = 4;
+        }
+
+        answer.setVisibility(View.GONE);
+        confirm.setVisibility(View.GONE);
+        retry.setVisibility(View.GONE);
+
+        number.setVisibility(View.VISIBLE);
+
+        level.setText("Level: "+ currentLevel);
+
+        randNumber=generateNumber(nums);
+        number.setText(randNumber);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                answer.setVisibility(View.VISIBLE);
+                confirm.setVisibility(View.VISIBLE);
+                number.setVisibility(View.GONE);
+                answer.requestFocus();
+
+            }
+        },delay);
+
+        confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(randNumber.equals(answer.getText().toString())) {
+
+                    answer.setVisibility(View.GONE);
+                    confirm.setVisibility(View.GONE);
+                    number.setVisibility(View.VISIBLE);
+
+                    answer.setText("");
+
+                    currentLevel+=bonus;
+                    nums++;
+
+                    level.setText("Level: " + currentLevel);
+
+                    randNumber = generateNumber(nums);
+                    number.setText(randNumber);
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            answer.setVisibility(View.VISIBLE);
+                            confirm.setVisibility(View.VISIBLE);
+                            number.setVisibility(View.GONE);
+
+                            answer.requestFocus();
+                        }
+                    },delay);
+                }else{
+                    if(previousLevel<currentLevel){
+                        highScore = highScore.valueOf(currentLevel);
+                        previousLevel = currentLevel;
+                        highScore();
+                    }
+                    level.setText("Game Over!! The Number Was: "+randNumber);
+                    confirm.setVisibility(View.GONE);
+                    confirm.setEnabled(false);
+                    retry.setVisibility(View.VISIBLE);
+
+                    currentLevel = 1;
+                }
+            }
+        });
+
+        retry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                retry();
+            }
+        });
+        exit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                exit();
+            }
+        });
+
+    }
+    public String generateNumber(int digits){
+        String output = "";
+        for (int round = 0;round<digits;round++){
+            int randomDigits = rand.nextInt(10);
+            output+= "" + randomDigits;
+        }
+        return output;
+    }
+    public void retry(){
+        Intent intent = new Intent(this,Game.class);
+        startActivity(intent);
+    }
+    public void highScore(){
+        Intent intent = new Intent(this,Highscore.class);
+        startActivity(intent);
+    }
+    public void exit(){
+        Intent intent = new Intent(this,MainMenu.class);
+        startActivity(intent);
+    }
+}
