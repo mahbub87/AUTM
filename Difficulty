@@ -1,1 +1,62 @@
+package com.example.sequenceflow;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+
+public class Difficulty extends AppCompatActivity {
+    Button buttonEasy;
+    Button buttonMid;
+    Button buttonHard;
+
+    public static String x="Easy";
+
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_difficulty);
+        buttonEasy = findViewById(R.id.Easy);
+        buttonMid = findViewById(R.id.Medium);
+        buttonHard = findViewById(R.id.Hard);
+
+
+
+        buttonEasy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                x = "Easy";
+                openMain();
+            }
+        });
+
+
+        buttonMid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                x = "Medium";
+                openMain();
+            }
+        });
+
+        buttonHard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                x = "Hard";
+                openMain();
+            }
+        });
+
+    }
+    public void openMain(){
+        Intent intent = new Intent(this,MainMenu.class);
+        intent.putExtra("",x);
+        startActivity(intent);
+    }
+
+
+}
